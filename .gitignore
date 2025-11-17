@@ -33,7 +33,6 @@ migrate_working_dir/
 .pub/
 /build/
 
-
 # Symbolication related
 app.*.symbols
 
@@ -46,3 +45,11 @@ app.*.map.json
 /android/app/release
 android/app/.cxx/
 linux/flutter/ephemeral/
+
+# FVM Version Cache
+.fvm/
+
+# Flutter generated plugin registrants (do not track)
+**/GeneratedPluginRegistrant.*
+**/generated_plugin_registrant.*
+**/generated_plugins.cmake
