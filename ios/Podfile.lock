@@ -1,6 +1,9 @@
 PODS:
   - connectivity_plus (0.0.1):
     - Flutter
+  - CwlCatchException (2.2.1):
+    - CwlCatchExceptionSupport (~> 2.2.1)
+  - CwlCatchExceptionSupport (2.2.1)
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -84,11 +87,11 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - speech_to_text (0.0.1):
+  - speech_to_text (7.2.0):
+    - CwlCatchException
     - Flutter
-    - Try
+    - FlutterMacOS
   - SSZipArchive (2.6.0)
-  - Try (2.1.1)
   - WebRTC-SDK (137.7151.04)
 
 DEPENDENCIES:
@@ -102,10 +105,12 @@ DEPENDENCIES:
   - livekit_client (from `.symlinks/plugins/livekit_client/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
+  - speech_to_text (from `.symlinks/plugins/speech_to_text/darwin`)
 
 SPEC REPOS:
   trunk:
+    - CwlCatchException
+    - CwlCatchExceptionSupport
     - GoogleDataTransport
     - GoogleMLKit
     - GoogleToolboxForMac
@@ -120,7 +125,6 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - SSZipArchive
-    - Try
     - WebRTC-SDK
 
 EXTERNAL SOURCES:
@@ -145,10 +149,12 @@ EXTERNAL SOURCES:
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   speech_to_text:
-    :path: ".symlinks/plugins/speech_to_text/ios"
+    :path: ".symlinks/plugins/speech_to_text/darwin"
 
 SPEC CHECKSUMS:
   connectivity_plus: 2a701ffec2c0ae28a48cf7540e279787e77c447d
+  CwlCatchException: 7acc161b299a6de7f0a46a6ed741eae2c8b4d75a
+  CwlCatchExceptionSupport: 54ccab8d8c78907b57f99717fb19d4cc3bce02dc
   device_info_plus: bf2e3232933866d73fe290f2942f2156cdd10342
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_tts: 0f492aab6accf87059b72354fcb4ba934304771d
@@ -171,9 +177,8 @@ SPEC CHECKSUMS:
   path_provider_foundation: 0b743cbb62d8e47eab856f09262bb8c1ddcfe6ba
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
+  speech_to_text: 87bf9298952e8d9073be1b6aade6d5758db5170c
   SSZipArchive: 8a6ee5677c8e304bebc109e39cf0da91ccef22ea
-  Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   WebRTC-SDK: 40d4f5ba05cadff14e4db5614aec402a633f007e
 
 PODFILE CHECKSUM: e8abc57d15e42fe25418fe6e486fea1d9ab9692f

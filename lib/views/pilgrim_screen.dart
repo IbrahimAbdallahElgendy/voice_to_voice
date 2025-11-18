@@ -14,6 +14,41 @@ bool _isArabicText(String text) {
   return arabicRegex.hasMatch(text);
 }
 
+// Extract the portion of a response suitable for TTS.
+// Removes metadata lines like "Target Language: ...", "Confidence: ..." and
+// returns the most plausible spoken paragraph.
+String _extractSpokenText(String text) {
+  final trimmed = text.trim();
+  if (trimmed.isEmpty) return '';
+
+  // If there are double newlines, assume the final paragraph is the spoken text
+  if (trimmed.contains('\n\n')) {
+    final parts = trimmed.split(RegExp(r'\n\n+'));
+    final candidate = parts.last.trim();
+    if (candidate.isNotEmpty) return candidate;
+  }
+
+  // Otherwise filter out metadata-like lines (key: value) and very short language codes
+  final lines = trimmed.split(RegExp(r'\n'));
+  final filtered = <String>[];
+  final metaKey = RegExp(
+    r'^(target language|language|confidence|score|probability)\b',
+    caseSensitive: false,
+  );
+  final keyValue = RegExp(r'^[A-Za-z ]{1,30}:');
+  for (var line in lines) {
+    final l = line.trim();
+    if (l.isEmpty) continue;
+    if (metaKey.hasMatch(l)) continue;
+    if (keyValue.hasMatch(l)) continue;
+    if (l.length <= 3 && RegExp(r'^[a-zA-Z]{2,3}\$').hasMatch(l)) continue;
+    filtered.add(l);
+  }
+
+  final result = filtered.join(' ').trim();
+  return result.isNotEmpty ? result : trimmed;
+}
+
 class PilgrimScreen extends StatefulWidget {
   const PilgrimScreen({super.key});
 
@@ -155,13 +190,19 @@ class _PilgrimScreenState extends State<PilgrimScreen> {
                                     IconButton(
                                       icon: const Icon(Icons.volume_up),
                                       onPressed: () {
-                                        final isArabic = _isArabicText(
+                                        final ttsText = _extractSpokenText(
                                           controller.currentWords,
                                         );
-                                        _ttsService.speak(
-                                          controller.currentWords,
-                                          languageCode: isArabic ? 'ar' : 'en',
-                                        );
+                                        if (ttsText.isNotEmpty) {
+                                          final isArabic = _isArabicText(
+                                            ttsText,
+                                          );
+                                          _ttsService.speak(
+                                            ttsText,
+                                            languageCode:
+                                                isArabic ? 'ar' : 'en',
+                                          );
+                                        }
                                       },
                                     ),
                                   ],
@@ -210,14 +251,19 @@ class _PilgrimScreenState extends State<PilgrimScreen> {
                                             color: Colors.white,
                                           ),
                                           onPressed: () {
-                                            final isArabic = _isArabicText(
+                                            final ttsText = _extractSpokenText(
                                               controller.currentTranslated,
                                             );
-                                            _ttsService.speak(
-                                              controller.currentTranslated,
-                                              languageCode:
-                                                  isArabic ? 'ar' : 'en',
-                                            );
+                                            if (ttsText.isNotEmpty) {
+                                              final isArabic = _isArabicText(
+                                                ttsText,
+                                              );
+                                              _ttsService.speak(
+                                                ttsText,
+                                                languageCode:
+                                                    isArabic ? 'ar' : 'en',
+                                              );
+                                            }
                                           },
                                         ),
                                       ],
@@ -270,13 +316,19 @@ class _PilgrimScreenState extends State<PilgrimScreen> {
                                     IconButton(
                                       icon: const Icon(Icons.volume_up),
                                       onPressed: () {
-                                        final isArabic = _isArabicText(
+                                        final ttsText = _extractSpokenText(
                                           lastMessage.originalText,
                                         );
-                                        _ttsService.speak(
-                                          lastMessage.originalText,
-                                          languageCode: isArabic ? 'ar' : 'en',
-                                        );
+                                        if (ttsText.isNotEmpty) {
+                                          final isArabic = _isArabicText(
+                                            ttsText,
+                                          );
+                                          _ttsService.speak(
+                                            ttsText,
+                                            languageCode:
+                                                isArabic ? 'ar' : 'en',
+                                          );
+                                        }
                                       },
                                     ),
                                   ],
@@ -324,14 +376,19 @@ class _PilgrimScreenState extends State<PilgrimScreen> {
                                           color: Colors.white,
                                         ),
                                         onPressed: () {
-                                          final isArabic = _isArabicText(
+                                          final ttsText = _extractSpokenText(
                                             lastMessage.translatedText,
                                           );
-                                          _ttsService.speak(
-                                            lastMessage.translatedText,
-                                            languageCode:
-                                                isArabic ? 'ar' : 'en',
-                                          );
+                                          if (ttsText.isNotEmpty) {
+                                            final isArabic = _isArabicText(
+                                              ttsText,
+                                            );
+                                            _ttsService.speak(
+                                              ttsText,
+                                              languageCode:
+                                                  isArabic ? 'ar' : 'en',
+                                            );
+                                          }
                                         },
                                       ),
                                     ],
@@ -352,7 +409,7 @@ class _PilgrimScreenState extends State<PilgrimScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (!_controller.speechEnabled)
+                        if (!controller.microphonePermissionGranted)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
                             child: Text(
@@ -360,6 +417,19 @@ class _PilgrimScreenState extends State<PilgrimScreen> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.red.shade700,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          )
+                        else if (!controller.speechEnabled)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Text(
+                              'Speech recognition is currently unavailable.\nIf your microphone is enabled, try reconnecting to the internet or restarting the app.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.orange.shade700,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),

@@ -32,6 +32,7 @@ class PilgrimController extends GetxController {
   // State variables
   bool speechEnabled = false;
   bool isListening = false;
+  bool microphonePermissionGranted = false;
   String currentWords = '';
   String currentTranslated = '';
   List<MessageModel> messages = [];
@@ -71,6 +72,7 @@ class PilgrimController extends GetxController {
 
       // Check if we already have permission
       final hasPermission = await _speechToText.hasPermission;
+      microphonePermissionGranted = hasPermission;
       debugPrint('Speech permission status: $hasPermission');
 
       // Initialize speech recognition
@@ -116,6 +118,7 @@ class PilgrimController extends GetxController {
 
         // Try to check permission again
         final permissionAfterInit = await _speechToText.hasPermission;
+        microphonePermissionGranted = permissionAfterInit;
         debugPrint('Permission status after init: $permissionAfterInit');
       }
 
